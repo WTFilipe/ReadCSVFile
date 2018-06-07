@@ -1,3 +1,5 @@
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -15,14 +17,14 @@ public class Leitor {
 	Class<?> classePassada;
 	ArrayList<Method>setters;
 
-	ArrayList<Object> leArquivo(Path caminho, Charset codificacao, String separador, ClasseDeTeste classeCriada) throws Exception {
+	ArrayList<Object> leArquivo(Path caminho, Charset codificacao, String separador, ClasseDeTeste classe) throws Exception {
 		// Lê e processa o arquivo
 		
 		linhas = Files.readAllLines( caminho, codificacao );
 		colunas = linhas.get(0).split(separador);
 		
 		//Crio um array para o nome dos setters
-		String[] nomeDosSetters = new String[colunas.length];
+		String[] nomeDosSetters = new String[colunas.length];		
 		
 		//Transformo o nome das Colunas para um SetNome
 		for(int i = 0; i < colunas.length; i ++){
@@ -34,15 +36,23 @@ public class Leitor {
 		}
 		
 		//Crio uma nova instância com o nome da classe passada
-		classePassada = classeCriada.getClass();
-		//Crio um array com objetos passados
-		for(int i = 0; i < colunas.length; i++) {
+		classePassada = classe.getClass();
+		
+		//Crio um Array de Objetos, será o array a ser retornado no final 
+		for(int i = 1; i < linhas.size(); i++) {
 			objetosCriados.add(classePassada.newInstance());
 		}
 		
-		//Gero os me
-		for(int i = 0; i < colunas.length; i++) {
-			setters.add(classePassada.getMethod(nomeDosSetters[i], String.class));
+		//Percorro as linhas (objetos) do csv
+		for(int i = 1; i < linhas.size(); i++) {
+			String[] valores = linhas.get(i).split(separador);
+			
+			//Percorro os valores de cada linha (objeto) do csv
+			for(int j = 0; j < valores.length; j++) {
+				//Chamo um metodo e uso invoke para atribuir valores aos campos
+				Method setter2 = classePassada.getMethod(nomeDosSetters[j], String.class);
+				setter2.invoke(objetosCriados.get(i-1), valores[j]);
+			}
 		}
 		
 		return objetosCriados;

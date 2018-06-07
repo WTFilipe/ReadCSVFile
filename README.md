@@ -1,2 +1,2 @@
 # ReadCSVFile
-Some code that read a CSV file and create objects based on it
+Some code that reads a CSV file and create objects based on it

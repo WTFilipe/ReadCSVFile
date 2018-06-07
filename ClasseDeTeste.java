@@ -13,10 +13,6 @@ public class ClasseDeTeste {
 		this.nome = nome;
 	}
 	
-	public void setTelefone(String telefone) {
-		this.telefone = telefone;
-	}
-	
 	public void setEmail(String email) {
 		this.email = email;
 	}

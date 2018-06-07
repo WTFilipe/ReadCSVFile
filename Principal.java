@@ -13,8 +13,7 @@ public class Principal {
 		Path caminho = Paths.get("/home/filipe/eclipse-workspace/ReadCSVFile/src", "a.csv");
 		Charset codificacao = Charset.forName("UTF-8");
 		String separador = ",";
-		ClasseDeTeste classeCriada;
-		classeCriada = new ClasseDeTeste();
+		Class<?> classeCriada = ClasseDeTeste.class;
 		
 		try {
 			System.out.println(classe.leArquivo(caminho, codificacao, separador, classeCriada));

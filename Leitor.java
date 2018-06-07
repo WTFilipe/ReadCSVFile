@@ -14,10 +14,9 @@ public class Leitor {
 	String texto;
 	ArrayList<Object> objetosCriados = new ArrayList<>();
 	String[] colunas;
-	Class<?> classePassada;
 	ArrayList<Method>setters;
 
-	ArrayList<Object> leArquivo(Path caminho, Charset codificacao, String separador, ClasseDeTeste classe) throws Exception {
+	ArrayList<Object> leArquivo(Path caminho, Charset codificacao, String separador, Class<?> classe) throws Exception {
 		// Lê e processa o arquivo
 		
 		linhas = Files.readAllLines( caminho, codificacao );
@@ -35,12 +34,9 @@ public class Leitor {
 			nomeDosSetters[i] = nomeDoMetodo; 
 		}
 		
-		//Crio uma nova instância com o nome da classe passada
-		classePassada = classe.getClass();
-		
 		//Crio um Array de Objetos, será o array a ser retornado no final 
 		for(int i = 1; i < linhas.size(); i++) {
-			objetosCriados.add(classePassada.newInstance());
+			objetosCriados.add(classe.newInstance());
 		}
 		
 		//Percorro as linhas (objetos) do csv
@@ -49,9 +45,15 @@ public class Leitor {
 			
 			//Percorro os valores de cada linha (objeto) do csv
 			for(int j = 0; j < valores.length; j++) {
+				
 				//Chamo um metodo e uso invoke para atribuir valores aos campos
-				Method setter2 = classePassada.getMethod(nomeDosSetters[j], String.class);
-				setter2.invoke(objetosCriados.get(i-1), valores[j]);
+				try {
+					Method setter2 = classe.getMethod(nomeDosSetters[j], String.class);
+					setter2.invoke(objetosCriados.get(i-1), valores[j]);
+				} catch (NoSuchMethodException e) {
+					System.out.println("Campo " + colunas[j]+ " não encontrado na classe " + classe.getName() );
+				}
+				
 			}
 		}
 		
